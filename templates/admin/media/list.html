@@ -1,0 +1,118 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Media Library</h1>
+        <button onclick="document.getElementById('upload-input').click()" 
+                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+            Upload Media
+        </button>
+        <input type="file" id="upload-input" class="hidden" accept="image/*" 
+               onchange="uploadMedia(this.files[0])">
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="mb-4 p-4 rounded {% if category == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for file in media_files %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                {% if file.content_type.startswith('image/') %}
+                    <img src="{{ file.url }}" alt="{{ file.name }}" class="w-full h-48 object-cover">
+                {% else %}
+                    <div class="w-full h-48 bg-gray-100 flex items-center justify-center">
+                        <span class="text-gray-400 text-4xl">📄</span>
+                    </div>
+                {% endif %}
+                <div class="p-4">
+                    <h3 class="text-sm font-medium text-gray-900 truncate" title="{{ file.name }}">
+                        {{ file.name }}
+                    </h3>
+                    <p class="text-sm text-gray-500">
+                        {{ (file.size / 1024)|round(1) }} KB
+                    </p>
+                    <p class="text-xs text-gray-400">
+                        {{ file.updated.strftime('%Y-%m-%d %H:%M') }}
+                    </p>
+                    <div class="mt-4 flex justify-between">
+                        <button onclick="copyToClipboard('{{ file.url }}')" 
+                                class="text-blue-600 hover:text-blue-800 text-sm">
+                            Copy URL
+                        </button>
+                        <button onclick="deleteMedia('{{ file.name }}')"
+                                class="text-red-600 hover:text-red-800 text-sm">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-span-full text-center py-12 bg-white rounded-lg">
+                <p class="text-gray-500">No media files found. Upload some images to get started!</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('URL copied to clipboard!');
+    }).catch(err => {
+        console.error('Failed to copy URL:', err);
+    });
+}
+
+function uploadMedia(file) {
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    fetch('{{ url_for("admin.upload_image") }}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert('Error uploading file: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error uploading file');
+    });
+}
+
+function deleteMedia(filename) {
+    if (!confirm('Are you sure you want to delete this file?')) return;
+    
+    fetch(`/admin/media/${encodeURIComponent(filename)}`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert('Error deleting file: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error deleting file');
+    });
+}
+</script>
+{% endblock %}

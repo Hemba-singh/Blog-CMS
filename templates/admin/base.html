@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Blog CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="{{ url_for('admin.dashboard') }}" class="font-bold text-xl text-gray-800">Blog CMS</a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="{{ url_for('admin.list_posts') }}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900">
+                            Posts
+                        </a>
+                        <a href="{{ url_for('admin.list_categories') }}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900">
+                            Categories
+                        </a>
+                        <a href="{{ url_for('admin.media') }}" class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900">
+                            Media
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="hidden sm:flex sm:items-center sm:ml-6">
+                        <div class="ml-3 relative">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm text-gray-500">{{ current_user.email }}</span>
+                                <a href="{{ url_for('auth.logout') }}" class="text-sm text-red-500 hover:text-red-700">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-white mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-center text-gray-500 text-sm">
+                &copy; {{ now.year }} Blog CMS. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

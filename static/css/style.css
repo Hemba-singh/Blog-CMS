@@ -1,0 +1,130 @@
+/* Custom styles for Blog CMS */
+
+/* Sticky footer */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Card hover effects */
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Category badges */
+.badge {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Post content styling */
+.card-text img {
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+}
+
+/* Admin dashboard cards */
+.card .display-4 {
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+
+/* Responsive tables */
+.table-responsive {
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Form styling */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Button hover effects */
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation active state */
+.nav-link.active {
+    font-weight: bold;
+}
+
+/* Post title links */
+.card-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.card-title a:hover {
+    color: #007bff;
+}
+
+/* Footer styling */
+.footer {
+    background-color: #f8f9fa;
+    padding: 1rem 0;
+    margin-top: auto;
+}
+
+/* Pagination styling */
+.pagination {
+    margin-bottom: 2rem;
+}
+
+.page-link {
+    color: #007bff;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* Modal animations */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}
+
+/* Category list in sidebar */
+.card-body .badge {
+    display: inline-block;
+    margin: 0.25rem;
+}
+
+/* TinyMCE editor customization */
+.tox-tinymce {
+    border-radius: 0.25rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card .display-4 {
+        font-size: 2rem;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+}

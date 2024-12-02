@@ -1,0 +1,131 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ "Edit" if post else "Create" }} Post{% endblock %}
+
+{% block extra_head %}
+<!-- Tailwind Elements -->
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">{{ "Edit" if post else "Create" }} Post</h1>
+            <a href="{{ url_for('admin.list_posts') }}" class="text-blue-500 hover:text-blue-600">
+                Back to Posts
+            </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-4 p-4 rounded {% if category == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="space-y-6" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+            
+            <div class="space-y-4">
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                    {{ form.title(class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500") }}
+                    {% if form.title.errors %}
+                        {% for error in form.title.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div>
+                    <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
+                    {{ form.content(class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500", rows="10") }}
+                    {% if form.content.errors %}
+                        {% for error in form.content.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Image URL -->
+                <div>
+                    <label for="image_url" class="block text-sm font-medium text-gray-700">Image URL</label>
+                    {{ form.image_url(class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500") }}
+                    {% if form.image_url.errors %}
+                        {% for error in form.image_url.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Featured Image -->
+                <div>
+                    <label for="featured_image" class="block text-sm font-medium text-gray-700">Featured Image</label>
+                    {{ form.featured_image(class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100") }}
+                    {% if form.featured_image.errors %}
+                        {% for error in form.featured_image.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    {% if post and post.featured_image %}
+                        <div class="mt-2">
+                            <img src="data:image/jpeg;base64,{{ post.featured_image }}" alt="Current featured image" class="h-32 w-auto object-cover rounded-md">
+                        </div>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Supported formats: JPG, JPEG, PNG, GIF</p>
+                </div>
+
+                <!-- Categories -->
+                <div>
+                    <label for="categories" class="block text-sm font-medium text-gray-700">Categories</label>
+                    {{ form.categories(class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500") }}
+                    {% if form.categories.errors %}
+                        {% for error in form.categories.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Tags -->
+                <div>
+                    <label for="tags" class="block text-sm font-medium text-gray-700">Tags</label>
+                    {{ form.tags(class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500", placeholder="Enter tags separated by commas") }}
+                    {% if form.tags.errors %}
+                        {% for error in form.tags.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="flex justify-end space-x-4">
+                <button type="submit" name="action" value="save_draft" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                    Save Draft
+                </button>
+                <button type="submit" name="action" value="publish" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    Publish
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Initialize Tom Select for categories
+    new TomSelect('#category', {
+        plugins: ['remove_button'],
+        persist: false,
+        createOnBlur: true,
+        create: true,
+        maxItems: null
+    });
+</script>
+{% endblock %}

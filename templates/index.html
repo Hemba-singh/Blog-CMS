@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Blog CMS{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Main Content -->
+    <div class="col-md-8">
+        <h1 class="mb-4">Latest Posts</h1>
+        {% for post in posts.items %}
+            <article class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        <a href="{{ url_for('blog.post_detail', post_id=post.id) }}" class="text-decoration-none text-dark">
+                            {{ post.title }}
+                        </a>
+                    </h2>
+                    <p class="card-text text-muted">
+                        <small>
+                            Posted by {{ post.author.username }} on {{ post.created_at.strftime('%B %d, %Y') }}
+                        </small>
+                    </p>
+                    <p class="card-text">{{ post.content[:200] }}...</p>
+                    <a href="{{ url_for('blog.post_detail', post_id=post.id) }}" class="btn btn-primary">Read More</a>
+                </div>
+                <div class="card-footer text-muted">
+                    Categories:
+                    {% for category in post.categories %}
+                        <a href="{{ url_for('blog.category_posts', category_id=category.id) }}" class="badge bg-secondary text-decoration-none">
+                            {{ category.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </article>
+        {% else %}
+            <div class="alert alert-info">No posts found.</div>
+        {% endfor %}
+
+        <!-- Pagination -->
+        {% if posts.pages > 1 %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if posts.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('blog.index', page=posts.prev_num) }}">Previous</a>
+                        </li>
+                    {% endif %}
+
+                    {% for page_num in posts.iter_pages() %}
+                        {% if page_num %}
+                            <li class="page-item {% if page_num == posts.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('blog.index', page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if posts.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('blog.index', page=posts.next_num) }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">Categories</div>
+            <div class="card-body">
+                {% for category in categories %}
+                    <a href="{{ url_for('blog.category_posts', category_id=category.id) }}" class="badge bg-secondary text-decoration-none">
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Blog CMS{% endblock %}
+
+{% block content %}
+<article class="card mb-4">
+    <div class="card-body">
+        <h1 class="card-title">{{ post.title }}</h1>
+        <p class="text-muted">
+            Posted by {{ post.author.username }} on {{ post.created_at.strftime('%B %d, %Y') }}
+            {% if post.created_at != post.updated_at %}
+                <br>Updated on {{ post.updated_at.strftime('%B %d, %Y') }}
+            {% endif %}
+        </p>
+        
+        <!-- Categories -->
+        <div class="mb-3">
+            {% for category in post.categories %}
+                <a href="{{ url_for('blog.category_posts', category_id=category.id) }}" class="badge bg-secondary text-decoration-none">
+                    {{ category.name }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <!-- Post Content -->
+        <div class="card-text">
+            {{ post.content|safe }}
+        </div>
+
+        <!-- Author Actions -->
+        {% if current_user.is_authenticated and (current_user.id == post.author.id or current_user.is_admin) %}
+            <div class="mt-4">
+                <a href="{{ url_for('blog.update_post', post_id=post.id) }}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</article>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this post? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('blog.delete_post', post_id=post.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
